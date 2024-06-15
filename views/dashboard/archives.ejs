@@ -1,0 +1,119 @@
+<% extend('../layouts/dashboard_layout') %>
+
+<div class="container-fluid my-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="btn-group w-100">
+        <a
+          href="/dashboard/archives?status=public"
+          class="btn btn-outline-secondary w-100 rounded-0 <% if(status==='public') { %>active<% } %>"
+        >
+          已發佈
+        </a>
+
+        <a
+          href="/dashboard/archives?status=draft"
+          class="btn btn-outline-secondary w-100 rounded-0 <% if(status==='draft') { %>active<% } %>"
+        >
+          草稿
+        </a>
+
+        <a href="/dashboard/article" class="btn btn-primary">新增文章</a>
+      </div>
+
+      <% for(const articleIndex in articles) { %>
+      <!-- prettier-ignore -->
+      <div class="card my-3">
+        <h4 class="card-header"><%- articles[articleIndex].title %></h4>
+        <div class="card-body">
+          <div class="mb-2">
+            <%- striptags(articles[articleIndex].content).replaceAll('　','').slice(0, 198) %>
+            <% if(articles[articleIndex].content.length > 198) { %>
+              ...
+            <% } %>
+          </div>
+          <ul class="d-flex align-items-center list-unstyled mb-0">
+            <li class="mr-3 my-0">
+              <span class="fa fa-clock-o"></span>
+              建立時間：<%- moment(articles[articleIndex].createTime).format('YYYY/MM/DD HH:mm:ss') %>
+            </li>
+
+            <% if(articles[articleIndex].updateTime) { %>
+              <li class="mr-3 my-0">
+                <span class="mr-3">|</span>
+                <span class="fa fa-clock-o"></span>
+                更新時間：<%- moment(articles[articleIndex].updateTime).format('YYYY/MM/DD HH:mm:ss') %>
+              </li>
+            <% } %>
+
+            <li class="mr-3 my-0">
+              <span class="mr-3">|</span>
+              <span class="fa fa-folder-open-o"></span>
+              <span><%- categories[articles[articleIndex].category].name %></span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card-footer p-0 btn-group">
+          <a
+            href="#"
+            id="deleteArticleBtn"
+            class="btn btn-outline-danger rounded-0 deletePost"
+            data-id="<%- articles[articleIndex].id %>"
+            data-title="<%- articles[articleIndex].title %>"
+          >
+            刪除
+          </a>
+
+          <a
+            href="/dashboard/article/<%- articles[articleIndex].id %>"
+            class="btn btn-outline-secondary w-100 rounded-0"
+          >
+            編輯
+          </a>
+
+          <a
+            href="/post/<%- articles[articleIndex].id %>"
+            target="_blank"
+            class="btn btn-outline-secondary w-100 rounded-0"
+          >
+            預覽
+          </a>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <%- include('../components/pagination') %>
+</div>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
+  integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  const allDeleteArticleBtn = document.querySelectorAll('#deleteArticleBtn');
+
+  allDeleteArticleBtn.forEach((deleteArticleBtn) => {
+    deleteArticleBtn.addEventListener('click', async (event) => {
+      event.preventDefault();
+
+      const id = deleteArticleBtn.dataset.id;
+      const title = deleteArticleBtn.dataset.title;
+
+      const result = confirm(`確定要刪除 ${title} 嗎？`);
+      if (!result) return;
+
+      try {
+        const res = await axios.delete(`/dashboard/article/${id}`);
+        alert(res.data.message);
+        window.location.reload();
+      } catch (err) {
+        alert('發生錯誤');
+      }
+    });
+  });
+</script>

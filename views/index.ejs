@@ -1,0 +1,50 @@
+<% extend('./layouts/layout') %>
+
+<div class="container">
+  <div class="row my-4 justify-content-center">
+    <!-- prettier-ignore -->
+    <div class="col-md-9">
+      <% for(const articleIndex in articles) { %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <a href="/post/<%- articles[articleIndex].id %>">
+              <h2 class="text-primary"><%- articles[articleIndex].title %></h2>
+            </a>
+            <div class="d-flex flex-row text-secondary small mb-2">
+              <ul class="d-flex align-items-center list-unstyled mb-0">
+                <li class="mr-3 my-0">
+                  <span class="fa fa-clock-o"></span>
+                  建立時間：<%- moment(articles[articleIndex].createTime).format('YYYY/MM/DD HH:mm:ss') %>
+                </li>
+
+                <% if(articles[articleIndex].updateTime) { %>
+                  <li class="mr-3 my-0">
+                    <span class="mr-3">|</span>
+                    <span class="fa fa-clock-o"></span>
+                    更新時間：<%- moment(articles[articleIndex].updateTime).format('YYYY/MM/DD HH:mm:ss') %>
+                  </li>
+                <% } %>
+
+                <li class="mr-3 my-0">
+                  <span class="mr-3">|</span>
+                  <i class="fa fa-tag" aria-hidden="true"></i>
+                  <a href="#" class="text-info">
+                    <%- categories[articles[articleIndex].category].name %>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <%- striptags(articles[articleIndex].content).replaceAll('　','').slice(0, 198) %>
+              <% if(articles[articleIndex].content.length > 198) { %>
+                ...
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <%- include('components/pagination') %>
+</div>

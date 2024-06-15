@@ -1,0 +1,26 @@
+<nav class="my-5" aria-label="Page navigation example">
+  <!-- prettier-ignore -->
+  <ul class="pagination justify-content-center">
+    <li class="page-item <% if(!pagination.hasPre) { %>disabled<% } %>">
+      <a class="page-link" href="<%- currentUrl %>page=<%- pagination.currentPage - 1 %>" tabindex="-1">
+        Previous
+      </a>
+    </li>
+
+    <% for(let page = 1; page < pagination.totalPage + 1; page++) { %>
+      <li class="page-item <% if(page == pagination.currentPage) { %>active<% } %>">
+        <a class="page-link" href="<%- currentUrl %>page=<%- page %>"
+          <% if(page == pagination.currentPage) { %>style="pointer-events: none;"<% } %>
+          >
+          <%- page %>
+        </a>
+      </li>
+    <% } %>
+
+    <li class="page-item <% if(!pagination.hasNext) { %>disabled<% } %>">
+      <a class="page-link" href="<%- currentUrl %>page=<%- pagination.currentPage + 1 %>">
+        Next
+      </a>
+    </li>
+  </ul>
+</nav>
